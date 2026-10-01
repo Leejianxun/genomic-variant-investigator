@@ -3,8 +3,8 @@ import requests
 ESEARCH = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi"
 ESUMMARY = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi"
 
-def clinvar_query(chrom, pos, ref, alt):
-    term = f"{chrom}-{pos}-{ref}-{alt}"
+def clinvar_query(chrom, pos, ref, alt, assembly="GRCh38"):
+    term = f"{chrom}:{pos}:{ref}:{alt}({assembly})"
     r = requests.get(ESEARCH, params={
         "db": "clinvar", "term": term, "retmode": "json"
     }, timeout=30)

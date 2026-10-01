@@ -1,0 +1,3 @@
+variant_id	chrom	pos	ref	alt	gene	consequence	impact	amino_acids	sift	polyphen	clinvar_matches
+variant_1	17	43071077	G	A	BRCA1	missense_variant	MODERATE	S/C	deleterious	possibly_damaging	0
+variant_2	13	32932018	G	A	NA	intergenic_variant	NA	NA	NA	NA	0

@@ -4,6 +4,7 @@ import pandas as pd
 
 from vep import annotate_variants
 from clinvar import clinvar_query
+from summary import build_summary
 
 def load_variants(path):
     df = pd.read_csv(path, sep="\t", dtype={"chrom": str})
@@ -25,11 +26,24 @@ def main():
     variants = df.to_dict(orient="records")
     vep_results = annotate_variants(variants)
     clinvar_results = {
-        v["id"]: clinvar_query(v["chrom"], v["pos"], v["ref"], v["alt"])
+        v["id"]: clinvar_query(
+            v["chrom"],
+            v["pos"],
+            v["ref"],
+            v["alt"],
+            assembly="GRCh38"
+        )
         for v in variants
     }
 
+    summary_rows = build_summary(
+        variants,
+        vep_results,
+        clinvar_results
+    )
+
     report = {
+        "genome_assembly": "GRCh38",
         "input_variants": variants,
         "vep": vep_results,
         "clinvar": clinvar_results,
@@ -38,7 +52,10 @@ def main():
     out = Path(args.output)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json.dumps(report, indent=2), encoding="utf-8")
+    summary_df = pd.DataFrame(summary_rows).fillna("NA")
+    summary_df.to_csv("results/summary.tsv", sep="\t", index=False)
     print(f"Wrote {out}")
+    print("Wrote results/summary.tsv")
 
 if __name__ == "__main__":
     main()
